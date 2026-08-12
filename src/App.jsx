@@ -3,34 +3,36 @@ import "./App.css";
 import axios from "axios";
 
 function App() {
-  const [picture, setPicture] = useState(null);
+  const [pictures, setPictures] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  async function fetchPicture() {
+  async function fetchPictures() {
     setLoading(true);
     const { data } = await axios.get(
-      `https://api.nasa.gov/planetary/apod?api_key=ddjj3qap7F3iGQRbCFcuHL4g9XUP05gbz8llmE90`,
+      `https://api.nasa.gov/planetary/apod?api_key=ddjj3qap7F3iGQRbCFcuHL4g9XUP05gbz8llmE90&start_date=2026-08-01&end_date=2026-08-11`,
     );
-    setPicture(data);
+    setPictures(data);
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchPicture();
+    fetchPictures();
   }, []);
 
   return (
     <>
       <div>
         <h1>Space Explorer</h1>
-        <div>{loading ? "Loading..." : picture.title}</div>
-        {!loading && (
-          <>
-            <img src={picture.url} alt={picture.title} />
-            <p>{picture.explanation}</p>
-          </>
-        )}
-        <button onClick={fetchPicture}>New Photo</button>
+        {loading && <div>Loading...</div>}
+        {!loading &&
+          pictures.map((pic) => (
+            <div key={pic.date}>
+              <h2>{pic.title}</h2>
+              <img src={pic.url} alt={pic.title} />
+              <p>{pic.explanation}</p>
+            </div>
+          ))}
+        <button onClick={fetchPictures}>New Photo</button>
       </div>
     </>
   );
